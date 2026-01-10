@@ -106,9 +106,6 @@ tibble(
 # Multiple Linear Regression (MLR) with all predictors except id, train, and lpsa
 mlr_fit <- lm(lpsa ~ lcavol + lweight + age + lbph + svi + lcp + gleason + pgg45, data = train_df)
 
-# MLR fit for top 3 predictors lcavol, svi, lcp
-mlr_fit_best <- lm(lpsa ~ lcavol + svi + lcp, data = train_df)
-
 # Coefficient estimates, standard errors, t-tests
 summary(mlr_fit)$coefficients
 
@@ -117,7 +114,7 @@ confint(mlr_fit, level = 0.95)
 
 # Generate predictions using the MLR model
 pred_test_mlr <- predict(mlr_fit, newdata = test_df)
-pred_test_mlr_best <- predict(mlr_fit_best, newdata = test_df)
+
 
 # Evaluate MLR model performance on test set
 rmse_mlr <- RMSE(pred_test_mlr, test_df$lpsa)
@@ -125,7 +122,10 @@ r2_mlr   <- R2(pred_test_mlr, test_df$lpsa)
 rmse_mlr
 r2_mlr
 
-# Evaluate MLR (best 3 predictors) model performance on test set
+# MLR fit for top 3 predictors lcavol, svi, lweight
+mlr_fit_best <- lm(lpsa ~ lcavol + svi + lweight, data = train_df)
+pred_test_mlr_best <- predict(mlr_fit_best, newdata = test_df)
+# Evaluate MLR (best 3 predictors: lcavol, lweight, svi) model performance on test set
 rmse_mlr_best <- RMSE(pred_test_mlr_best, test_df$lpsa)
 r2_mlr_best   <- R2(pred_test_mlr_best, test_df$lpsa)
 rmse_mlr_best
@@ -257,55 +257,101 @@ gg_lm_diagnostics <- function(fit, label_top = 5) {
 gg_lm_diagnostics(slr_fit)
 gg_lm_diagnostics(mlr_fit)
 
-# --- Normality test (Shapiro–Wilk) ---
-# H0: errors are normally distributed
-#shapiro.test(resid(fit1)): will give an error, because it 
-#cannot handle more than 5000 residuals.
+# Plot Residuals vs. lcavol, lweight, svi (partial residuals)
+aug <- augment(mlr_fit)
 
-set.seed(210)
-# For large datasets, sample 5000 residuals for the test
-n <- length(res)
-shapiro.test(sample(resid(mlr_fit), size = min(5000, n)))
+beta_lcavol <- coef(mlr_fit)["lcavol"]
+beta_lweight <- coef(mlr_fit)["lweight"]
+beta_svi <- coef(mlr_fit)["svi"]
+
+# Partial residuals vs lcavol
+aug %>%
+  mutate(partial_resid_lcavol = .resid + beta_lcavol * lcavol) %>%
+  ggplot(aes(lcavol, partial_resid_lcavol)) +
+  geom_point(alpha = 0.25) +
+  geom_smooth(method = "loess", se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE, linetype = 2) +
+  labs(
+    title = "Partial Residuals vs lcavol (MLR-adjusted)",
+    x = "lcavol",
+    y = "Partial residuals"
+  )
+
+# Partial residuals vs lweight
+aug %>%
+  mutate(partial_resid_lweight = .resid + beta_lweight * lweight) %>%
+  ggplot(aes(lweight, partial_resid_lweight)) +
+  geom_point(alpha = 0.25) +
+  geom_smooth(method = "loess", se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE, linetype = 2) +
+  labs(
+    title = "Partial Residuals vs lweight (MLR-adjusted)",
+    x = "lweight",
+    y = "Partial residuals"
+  )
+
+# Partial residuals vs svi
+aug %>%
+  mutate(partial_resid_svi = .resid + beta_svi * svi) %>%
+  ggplot(aes(svi, partial_resid_svi)) +
+  geom_point(alpha = 0.25) +
+  geom_smooth(method = "lm", se = FALSE, linetype = 2) +
+  labs(
+    title = "Partial Residuals vs svi (MLR-adjusted)",
+    x = "svi",
+    y = "Partial residuals"
+  )
 
 
-# --- Homoskedasticity test (Breusch–Pagan) ---
-# H0: Var(eps_i | x_i) = constant (sigma^2)
-bptest(mlr_fit)
-
-# --- Independence / autocorrelation (Durbin–Watson) ---
-# NOTE: DW is meaningful for ordered observations (e.g., time series).
-# Here, recordings come from multiple subjects over time.
-# A simple illustration: sort within subject by test_time.
-pd_ord <- pd %>%
-  arrange(subject., test_time)
-
-fit1_ord <- lm(total_UPDRS ~ PPE, data = pd_ord)
-dwtest(fit1_ord)
-
-# --- Addressing non-normality: Box–Cox transformation ---
-# Requires strictly positive response; total_UPDRS is nonnegative in practice.
-min(pd$total_UPDRS)
-
-# Estimate lambda by maximizing the profile log-likelihood
-bc <- boxcox(fit1, lambda = seq(-2, 2, by = 0.05), plotit = TRUE)
-lambda_hat <- bc$x[which.max(bc$y)]
-lambda_hat
-
-# Transform the response using Box–Cox definition
-boxcox_transform <- function(y, lambda) {
-  if (abs(lambda) < 1e-8) return(log(y))
-  (y^lambda - 1) / lambda
-}
-
-# Apply transformation
-pd$Y_bc <- boxcox_transform(pd$total_UPDRS, lambda_hat)
-
-# Fit linear model with transformed response
-fit1_bc <- lm(Y_bc ~ PPE, data = pd)
-summary(fit1_bc)
-
-# Compare diagnostics pre/post transformation
-par(mfrow = c(2, 2)) # set plotting layout to 2x2
-plot(fit1) # original
-plot(fit1_bc) # Box–Cox transformed
-par(mfrow = c(1, 1)) # reset plotting layout
+# # --- Normality test (Shapiro–Wilk) ---
+# # H0: errors are normally distributed
+# #shapiro.test(resid(fit1)): will give an error, because it 
+# #cannot handle more than 5000 residuals.
+# 
+# set.seed(210)
+# # For large datasets, sample 5000 residuals for the test
+# n <- length(res)
+# shapiro.test(sample(resid(mlr_fit), size = min(5000, n)))
+# 
+# 
+# # --- Homoskedasticity test (Breusch–Pagan) ---
+# # H0: Var(eps_i | x_i) = constant (sigma^2)
+# bptest(mlr_fit)
+# 
+# # --- Independence / autocorrelation (Durbin–Watson) ---
+# # NOTE: DW is meaningful for ordered observations (e.g., time series).
+# # Here, recordings come from multiple subjects over time.
+# # A simple illustration: sort within subject by test_time.
+# pd_ord <- pd %>%
+#   arrange(subject., test_time)
+# 
+# fit1_ord <- lm(total_UPDRS ~ PPE, data = pd_ord)
+# dwtest(fit1_ord)
+# 
+# # --- Addressing non-normality: Box–Cox transformation ---
+# # Requires strictly positive response; total_UPDRS is nonnegative in practice.
+# min(pd$total_UPDRS)
+# 
+# # Estimate lambda by maximizing the profile log-likelihood
+# bc <- boxcox(fit1, lambda = seq(-2, 2, by = 0.05), plotit = TRUE)
+# lambda_hat <- bc$x[which.max(bc$y)]
+# lambda_hat
+# 
+# # Transform the response using Box–Cox definition
+# boxcox_transform <- function(y, lambda) {
+#   if (abs(lambda) < 1e-8) return(log(y))
+#   (y^lambda - 1) / lambda
+# }
+# 
+# # Apply transformation
+# pd$Y_bc <- boxcox_transform(pd$total_UPDRS, lambda_hat)
+# 
+# # Fit linear model with transformed response
+# fit1_bc <- lm(Y_bc ~ PPE, data = pd)
+# summary(fit1_bc)
+# 
+# # Compare diagnostics pre/post transformation
+# par(mfrow = c(2, 2)) # set plotting layout to 2x2
+# plot(fit1) # original
+# plot(fit1_bc) # Box–Cox transformed
+# par(mfrow = c(1, 1)) # reset plotting layout
