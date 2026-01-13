@@ -7,6 +7,7 @@ library(dplyr)
 library(ggrepel)
 library(patchwork)
 library(lmtest)
+library(car)
 
 # Load data
 df <- read_csv("prostate.csv")
@@ -36,6 +37,7 @@ dim(X_train)
 length(y_train)
 dim(X_test)
 length(y_test)
+
 
 # Simple Linear Regression (SLR) with the lcavol predictor
 slr_fit <- lm(lpsa ~ lcavol, data = train_df)
@@ -150,6 +152,9 @@ tibble(
     y = "Predicted lpsa (Log PSA)",
     color = "Legend"
   )
+
+#VIF check for multicollinearity
+vif(mlr_fit)
 
 # MLR Conclusion: The MLR model using all predictors in the test set shows worse performance compared to the SLR.
 # The RMSE increased from 0.6926 to 0.7220, and R-squared decreased from 0.5438 to 0.5052.
