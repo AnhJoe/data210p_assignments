@@ -14,7 +14,6 @@ train_indices <- sample(1:nrow(df), size = floor(0.8 * nrow(df)))
 df$train <- FALSE
 df$train[train_indices] <- TRUE
 
-
 cat("Dataset Dimensions:\n")
 cat(sprintf("Rows: %d\n", nrow(df)))
 cat(sprintf("Columns: %d\n", ncol(df)))
@@ -25,7 +24,7 @@ print(colnames(df))
 cat("\nData Types:\n")
 print(sapply(df, class))
 
-cat("\nFirst Few Rows:\n")
+cat("\nHead:\n")
 print(head(df))
 
 cat("\nSummary Statistics:\n")
@@ -173,12 +172,8 @@ salary_by_year <- df %>%
   arrange(posted_year)
 print(salary_by_year)
 
-cat("\nAverage Salary by Top 10 Countries:\n")
-country_counts <- sort(table(df$country), decreasing = TRUE)
-top_n_countries_summary <- min(10, length(country_counts))
-top_countries_summary <- names(country_counts)[1:top_n_countries_summary]
+cat("\nAverage Salary by Country:\n")
 salary_by_country_top <- df %>%
-  filter(country %in% top_countries_summary) %>%
   group_by(country) %>%
   summarize(
     count = n(),
@@ -189,12 +184,8 @@ salary_by_country_top <- df %>%
   arrange(desc(avg_salary))
 print(salary_by_country_top)
 
-cat("\nAverage Salary by Top 10 Job Titles:\n")
-job_title_counts_summary <- sort(table(df$job_title), decreasing = TRUE)
-top_n_titles_summary <- min(10, length(job_title_counts_summary))
-top_titles_summary <- names(job_title_counts_summary)[1:top_n_titles_summary]
+cat("\nAverage Salary by Job Title:\n")
 salary_by_title <- df %>%
-  filter(job_title %in% top_titles_summary) %>%
   group_by(job_title) %>%
   summarize(
     count = n(),
@@ -243,12 +234,12 @@ p2 <- ggplot(df, aes(x = log(salary_avg), fill = experience_level)) +
 p3 <- ggplot(df, aes(x = experience_level, y = salary_avg, fill = experience_level)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = experience_level), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by Experience Level (with Mean ± SD)",
+  labs(title = "Salary by Experience Level (with Mean and 95% CI)",
        x = "Experience Level",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -258,12 +249,12 @@ p3 <- ggplot(df, aes(x = experience_level, y = salary_avg, fill = experience_lev
 p4 <- ggplot(df, aes(x = company_type, y = salary_avg, fill = company_type)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = company_type), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by Company Type (with Mean ± SD)",
+  labs(title = "Salary by Company Type (with Mean and 95% CI)",
        x = "Company Type",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -273,12 +264,12 @@ p4 <- ggplot(df, aes(x = company_type, y = salary_avg, fill = company_type)) +
 p5 <- ggplot(df, aes(x = remote_type, y = salary_avg, fill = remote_type)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = remote_type), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by Remote Type (with Mean ± SD)",
+  labs(title = "Salary by Remote Type (with Mean and 95% CI)",
        x = "Remote Type",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -301,7 +292,7 @@ df_top_countries <- df[df$country %in% top_countries, ]
 p7 <- ggplot(df_top_countries, aes(x = reorder(country, country, function(x) -length(x)))) +
   geom_bar(fill = "purple", alpha = 0.7) +
   geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 3.5, fontface = "bold") +
-  labs(title = paste0("Top ", top_n_countries, " Countries by Job Postings"),
+  labs(title = paste0("Job Postings by Country"),
        x = "Country",
        y = "Count") +
   theme_minimal() +
@@ -317,7 +308,7 @@ p8 <- ggplot(salary_by_country, aes(x = reorder(country, avg_salary), y = avg_sa
   geom_text(aes(label = paste0("$", format(round(avg_salary, 0), big.mark = ",", scientific = FALSE))), 
             hjust = 1.1, size = 3.5, fontface = "bold", color = "black") +
   coord_flip() +
-  labs(title = paste0("Average Salary by Country (Top ", top_n_countries, ")"),
+  labs(title = paste0("Average Salary by Country"),
        x = "Country",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -342,20 +333,16 @@ p9 <- ggplot(df, aes(x = min_experience_years, y = salary_avg)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
-job_title_counts <- sort(table(df$job_title), decreasing = TRUE)
-top_n_titles <- min(10, length(job_title_counts))
-top_titles <- names(job_title_counts)[1:top_n_titles]
-df_top_titles <- df[df$job_title %in% top_titles, ]
-p10 <- ggplot(df_top_titles, aes(x = reorder(job_title, salary_avg, FUN = mean), 
-                                  y = salary_avg, fill = job_title)) +
+p10 <- ggplot(df, aes(x = reorder(job_title, salary_avg, FUN = mean), 
+                      y = salary_avg, fill = job_title)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = job_title), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = paste0("Salary by Job Title (Top ", top_n_titles, " with Mean ± SD)"),
+  labs(title = "Salary by Job Title (with Mean and 95% CI)",
        x = "Job Title",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -367,12 +354,12 @@ p11 <- ggplot(df, aes(x = reorder(industry, salary_avg, FUN = mean),
                       y = salary_avg, fill = industry)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = industry), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by Industry (with Mean ± SD)",
+  labs(title = "Salary by Industry (with Mean and 95% CI)",
        x = "Industry",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -383,12 +370,12 @@ p11 <- ggplot(df, aes(x = reorder(industry, salary_avg, FUN = mean),
 p12 <- ggplot(df, aes(x = company_size, y = salary_avg, fill = company_size)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = company_size), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by Company Size (with Mean ± SD)",
+  labs(title = "Salary by Company Size (with Mean and 95% CI)",
        x = "Company Size",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -398,12 +385,12 @@ p12 <- ggplot(df, aes(x = company_size, y = salary_avg, fill = company_size)) +
 p13 <- ggplot(df, aes(x = factor(posted_year), y = salary_avg, fill = factor(posted_year))) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = factor(posted_year)), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary Trends by Posted Year (with Mean ± SD)",
+  labs(title = "Salary Trends by Posted Year (with Mean and 95% CI)",
        x = "Posted Year",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -424,12 +411,12 @@ p14 <- ggplot(df_decile_cities, aes(x = reorder(city, salary_avg, FUN = mean),
                                      y = salary_avg, fill = city)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
                aes(fill = city), color = "black", stroke = 1) +
-  stat_summary(fun.data = mean_sdl, fun.args = list(mult = 1), geom = "errorbar", 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
                width = 0.2, linewidth = 1, color = "black") +
   stat_summary(fun = mean, geom = "text", 
                aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
                hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
-  labs(title = "Salary by City (One City per Decile with Mean ± SD)",
+  labs(title = "Salary by City (One City per Decile with Mean and 95% CI)",
        x = "City",
        y = "Average Salary (USD)") +
   theme_minimal() +
@@ -442,20 +429,20 @@ numerical_vars <- df[, c("min_experience_years", "salary_min_usd",
 cor_matrix <- cor(numerical_vars, use = "complete.obs")
 
 # print
-print(p1)
-print(p2)
-print(p3)
-print(p9)
-print(p4)
-print(p5)
-print(p6)
-print(p7)
-print(p8)
-print(p10)
-print(p11)
-print(p12)
-print(p13)
-print(p14)
+print(p1)   # freq graph avg sal by exp
+print(p2)   # freq graph log sal by exp
+print(p3)   # sal by exp
+print(p9)   # regression for sal by min exp
+print(p4)   # sal by company
+print(p5)   # sal by remote
+print(p6)   # num jobs by year
+print(p7)   # job posting by country
+print(p8)   # avg sal by country
+print(p10)  # sal by job title
+print(p11)  # sal by industry
+print(p12)  # sal by company size
+print(p13)  # sal trends by year
+print(p14)  # sal by city ***decile***
 
 cat("\nCorrelation Matrix\n")
 print(cor_matrix)
@@ -465,7 +452,7 @@ corrplot(cor_matrix, method = "color", type = "upper",
          mar = c(0, 0, 2, 0))
 
 # 1c
-cat("\nlog-transformed analysis WIP\n")
+# this bit goes in the report
 
 # 1d
 cat("\n5N Test Split:\n")
@@ -499,10 +486,6 @@ cat("Training Set - Average Salary:\n")
 print(summary(train_set$salary_avg))
 cat("\nTest Set - Average Salary:\n")
 print(summary(test_set$salary_avg))
-
-
-
-
 
 
 
