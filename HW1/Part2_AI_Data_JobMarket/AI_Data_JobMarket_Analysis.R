@@ -8,6 +8,11 @@ setwd("D:/data210p_assignments/HW1/Part2_AI_Data_JobMarket/Data")
 # 1a
 df <- read.csv("ai_jobs.csv", stringsAsFactors = FALSE)
 
+# Load and join skills_demand data
+skills_demand <- read.csv("skills_demand.csv", stringsAsFactors = FALSE)
+df <- df %>%
+  left_join(skills_demand, by = "job_id")
+
 # 5 fold train-test split indicator
 set.seed(210)
 train_indices <- sample(1:nrow(df), size = floor(0.8 * nrow(df)))
@@ -211,6 +216,81 @@ salary_by_city <- df %>%
   ) %>%
   arrange(desc(avg_salary))
 print(salary_by_city)
+
+cat("\nSkill Distribution:\n")
+print(head(sort(table(df$skill), decreasing = TRUE), 20))
+
+cat("\nSkill Category Distribution:\n")
+print(table(df$skill_category))
+
+cat("\nSkill Level Distribution:\n")
+print(table(df$skill_level))
+
+cat("\nAverage Salary by Skill Level:\n")
+salary_by_skill_level <- df %>%
+  group_by(skill_level) %>%
+  summarize(
+    count = n(),
+    avg_salary = mean(salary_avg, na.rm = TRUE),
+    median_salary = median(salary_avg, na.rm = TRUE),
+    sd_salary = sd(salary_avg, na.rm = TRUE)
+  ) %>%
+  arrange(desc(avg_salary))
+print(salary_by_skill_level)
+
+cat("\nAverage Salary by Skill Category:\n")
+salary_by_skill_category <- df %>%
+  group_by(skill_category) %>%
+  summarize(
+    count = n(),
+    avg_salary = mean(salary_avg, na.rm = TRUE),
+    median_salary = median(salary_avg, na.rm = TRUE),
+    sd_salary = sd(salary_avg, na.rm = TRUE)
+  ) %>%
+  arrange(desc(avg_salary))
+print(salary_by_skill_category)
+
+cat("\nAverage Salary by Top 20 Skills:\n")
+skill_counts <- sort(table(df$skill), decreasing = TRUE)
+top_20_skills <- names(skill_counts)[1:min(20, length(skill_counts))]
+salary_by_skill <- df %>%
+  filter(skill %in% top_20_skills) %>%
+  group_by(skill) %>%
+  summarize(
+    count = n(),
+    avg_salary = mean(salary_avg, na.rm = TRUE),
+    median_salary = median(salary_avg, na.rm = TRUE),
+    sd_salary = sd(salary_avg, na.rm = TRUE)
+  ) %>%
+  arrange(desc(avg_salary))
+print(salary_by_skill)
+
+cat("\nSkill Level x Skill Category Cross-Tabulation:\n")
+skill_crosstab <- table(df$skill_level, df$skill_category)
+print(skill_crosstab)
+
+cat("\nAverage Salary by Skill Level and Category:\n")
+salary_by_skill_level_category <- df %>%
+  group_by(skill_level, skill_category) %>%
+  summarize(
+    count = n(),
+    avg_salary = mean(salary_avg, na.rm = TRUE),
+    median_salary = median(salary_avg, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(avg_salary))
+print(salary_by_skill_level_category)
+
+cat("\nSkill Analysis by Experience Level:\n")
+skill_exp_analysis <- df %>%
+  group_by(experience_level, skill_level) %>%
+  summarize(
+    count = n(),
+    avg_salary = mean(salary_avg, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  arrange(experience_level, desc(avg_salary))
+print(skill_exp_analysis)
 
 # !!!! PLOTS CODE STARTS HERE !!!!
 p1 <- ggplot(df, aes(x = salary_avg, fill = experience_level)) +
@@ -428,6 +508,140 @@ numerical_vars <- df[, c("min_experience_years", "salary_min_usd",
                          "salary_max_usd", "salary_avg", "salary_range")]
 cor_matrix <- cor(numerical_vars, use = "complete.obs")
 
+p15 <- ggplot(df, aes(x = skill_level, y = salary_avg, fill = skill_level)) +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
+               aes(fill = skill_level), color = "black", stroke = 1) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
+               width = 0.2, linewidth = 1, color = "black") +
+  stat_summary(fun = mean, geom = "text", 
+               aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
+               hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
+  labs(title = "Salary by Skill Level (with Mean and 95% CI)",
+       x = "Skill Level",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "none")
+
+p16 <- ggplot(df, aes(x = reorder(skill_category, salary_avg, FUN = mean), 
+                      y = salary_avg, fill = skill_category)) +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
+               aes(fill = skill_category), color = "black", stroke = 1) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
+               width = 0.2, linewidth = 1, color = "black") +
+  stat_summary(fun = mean, geom = "text", 
+               aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
+               hjust = -0.2, vjust = 0.5, size = 3.5, fontface = "bold") +
+  labs(title = "Salary by Skill Category (with Mean and 95% CI)",
+       x = "Skill Category",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+skill_counts_plot <- sort(table(df$skill), decreasing = TRUE)
+top_15_skills_plot <- names(skill_counts_plot)[1:min(15, length(skill_counts_plot))]
+df_top_skills <- df %>% filter(skill %in% top_15_skills_plot)
+p17 <- ggplot(df_top_skills, aes(x = reorder(skill, salary_avg, FUN = mean), 
+                                  y = salary_avg, fill = skill)) +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 4, 
+               aes(fill = skill), color = "black", stroke = 1) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", 
+               width = 0.2, linewidth = 1, color = "black") +
+  stat_summary(fun = mean, geom = "text", 
+               aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
+               hjust = -0.2, vjust = 0.5, size = 2.8, fontface = "bold") +
+  labs(title = "Salary by Top 15 Skills (with Mean and 95% CI)",
+       x = "Skill",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+p18 <- ggplot(df, aes(x = skill_level)) +
+  geom_bar(fill = "steelblue", alpha = 0.7) +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 3.5, fontface = "bold") +
+  labs(title = "Distribution of Skill Levels",
+       x = "Skill Level",
+       y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+p19 <- ggplot(df, aes(x = reorder(skill_category, skill_category, function(x) -length(x)))) +
+  geom_bar(fill = "coral", alpha = 0.7) +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 3.5, fontface = "bold") +
+  labs(title = "Distribution of Skill Categories",
+       x = "Skill Category",
+       y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+p20 <- ggplot(df, aes(x = skill_level, y = salary_avg, fill = skill_level)) +
+  stat_summary(fun = mean, geom = "bar", alpha = 0.7) +
+  stat_summary(fun = mean, geom = "text", 
+               aes(label = paste0("$", format(round(after_stat(y), 0), big.mark = ",", scientific = FALSE))),
+               vjust = -0.5, size = 2.5, fontface = "bold") +
+  facet_wrap(~ skill_category, scales = "free_x") +
+  labs(title = "Salary by Skill Level within Each Skill Category",
+       x = "Skill Level",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+p21 <- ggplot(df, aes(x = experience_level, fill = skill_level)) +
+  geom_bar(position = "fill") +
+  labs(title = "Skill Level Distribution by Experience Level",
+       x = "Experience Level",
+       y = "Proportion",
+       fill = "Skill Level") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+p22 <- ggplot(df, aes(x = skill_level, y = salary_avg, fill = skill_level)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Salary Distribution by Skill Level",
+       x = "Skill Level",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "none")
+
+p23 <- ggplot(df, aes(x = reorder(skill_category, salary_avg, FUN = median), 
+                      y = salary_avg, fill = skill_category)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Salary Distribution by Skill Category",
+       x = "Skill Category",
+       y = "Average Salary (USD)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+salary_heatmap_data <- df %>%
+  group_by(skill_level, skill_category) %>%
+  summarize(avg_salary = mean(salary_avg, na.rm = TRUE),
+            count = n(),
+            .groups = 'drop')
+p24 <- ggplot(salary_heatmap_data, aes(x = skill_category, y = skill_level, fill = avg_salary)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0("$", format(round(avg_salary, 0), big.mark = ",", scientific = FALSE),
+                               "\n(n=", count, ")")), 
+            size = 3, fontface = "bold") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", 
+                      labels = function(x) paste0("$", format(x, big.mark = ",", scientific = FALSE))) +
+  labs(title = "Average Salary Heatmap: Skill Level x Skill Category",
+       x = "Skill Category",
+       y = "Skill Level",
+       fill = "Avg Salary") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
 # print
 print(p1)   # freq graph avg sal by exp
 print(p2)   # freq graph log sal by exp
@@ -443,6 +657,16 @@ print(p11)  # sal by industry
 print(p12)  # sal by company size
 print(p13)  # sal trends by year
 print(p14)  # sal by city ***decile***
+print(p15)  # sal by skill level
+print(p16)  # sal by skill category
+print(p17)  # sal by top 15 skills
+print(p18)  # skill level distribution
+print(p19)  # skill category distribution
+print(p20)  # sal by skill level and category (faceted)
+print(p21)  # skill level by experience level
+print(p22)  # boxplot sal by skill level
+print(p23)  # boxplot sal by skill category
+print(p24)  # heatmap avg sal by skill level x category
 
 cat("\nCorrelation Matrix\n")
 print(cor_matrix)
@@ -501,6 +725,44 @@ cat(sprintf("p-value: %.4f\n", chi_company$p.value))
 cramers_v_company <- sqrt(chi_company$statistic / (sum(company_table) * (min(nrow(company_table), ncol(company_table)) - 1)))
 cat(sprintf("Cramer's V (effect size): %.4f\n", cramers_v_company))
 if (cramers_v_company < 0.1) {
+  cat("Negligible Effect - good split despite p-value\n")
+} else {
+  cat("Effect size indicates meaningful difference if bad p-value\n")
+}
+
+cat("\nSkill Level Distribution:\n")
+cat("Training Set:\n")
+print(prop.table(table(train_set$skill_level)))
+cat("\nTest Set:\n")
+print(prop.table(table(test_set$skill_level)))
+
+cat("\nChi-Square Test for Skill Level:\n")
+skill_level_table <- table(df$train, df$skill_level)
+chi_skill_level <- chisq.test(skill_level_table)
+print(chi_skill_level)
+cat(sprintf("p-value: %.4f\n", chi_skill_level$p.value))
+cramers_v_skill_level <- sqrt(chi_skill_level$statistic / (sum(skill_level_table) * (min(nrow(skill_level_table), ncol(skill_level_table)) - 1)))
+cat(sprintf("Cramer's V (effect size): %.4f\n", cramers_v_skill_level))
+if (cramers_v_skill_level < 0.1) {
+  cat("Negligible Effect - good split despite p-value\n")
+} else {
+  cat("Effect size indicates meaningful difference if bad p-value\n")
+}
+
+cat("\nSkill Category Distribution:\n")
+cat("Training Set:\n")
+print(prop.table(table(train_set$skill_category)))
+cat("\nTest Set:\n")
+print(prop.table(table(test_set$skill_category)))
+
+cat("\nChi-Square Test for Skill Category:\n")
+skill_category_table <- table(df$train, df$skill_category)
+chi_skill_category <- chisq.test(skill_category_table)
+print(chi_skill_category)
+cat(sprintf("p-value: %.4f\n", chi_skill_category$p.value))
+cramers_v_skill_category <- sqrt(chi_skill_category$statistic / (sum(skill_category_table) * (min(nrow(skill_category_table), ncol(skill_category_table)) - 1)))
+cat(sprintf("Cramer's V (effect size): %.4f\n", cramers_v_skill_category))
+if (cramers_v_skill_category < 0.1) {
   cat("Negligible Effect - good split despite p-value\n")
 } else {
   cat("Effect size indicates meaningful difference if bad p-value\n")
@@ -609,20 +871,44 @@ p2b_8 <- ggplot(df, aes(x = factor(posted_year), y = log_salary_avg, fill = fact
   theme_minimal() +
   theme(legend.position = "none")
 
+p2b_9 <- ggplot(df, aes(x = skill_level, y = log_salary_avg, fill = skill_level)) +
+  geom_boxplot() +
+  labs(title = "Log(Salary) by Skill Level", x = "Skill Level", y = "Log(Salary)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+p2b_10 <- ggplot(df, aes(x = skill_category, y = log_salary_avg, fill = skill_category)) +
+  geom_boxplot() +
+  labs(title = "Log(Salary) by Skill Category", x = "Skill Category", y = "Log(Salary)") +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+
+p2b_11 <- ggplot(df, aes(x = skill_level, y = log_salary_avg, fill = skill_level)) +
+  geom_boxplot() +
+  facet_wrap(~ skill_category, scales = "free_x") +
+  labs(title = "Log(Salary) by Skill Level within Each Category",
+       x = "Skill Level", y = "Log(Salary)") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
 cat("Correlation of log_salary_avg with numeric features:\n")
 numeric_features <- df[, c("min_experience_years", "salary_min_usd", "salary_max_usd", "log_salary_avg")]
 cor_with_outcome <- cor(numeric_features, use = "complete.obs")
 print(cor_with_outcome[, "log_salary_avg"])
 
 # print plots
-print(p2b_1)
-print(p2b_2)
-print(p2b_3)
-print(p2b_4)
-print(p2b_5)
-print(p2b_6)
-print(p2b_7)
-print(p2b_8)
+print(p2b_1)  # log salary by experience level
+print(p2b_2)  # log salary by company type
+print(p2b_3)  # log salary by remote type
+print(p2b_4)  # log salary by industry
+print(p2b_5)  # log salary by company size
+print(p2b_6)  # log salary by employment type
+print(p2b_7)  # log salary vs experience years (scatter with regression)
+print(p2b_8)  # log salary by posted year
+print(p2b_9)  # log salary by skill level
+print(p2b_10) # log salary by skill category
+print(p2b_11) # log salary by skill level x category
 
 # 2c
 # **** missing values was done in 1a ****
@@ -737,8 +1023,34 @@ cat(sprintf("   - Company types: %d\n", length(unique(df$company_type))))
 cat(sprintf("   - Industries: %d\n", length(unique(df$industry))))
 cat(sprintf("   - Countries: %d\n", length(unique(df$country))))
 cat(sprintf("   - Years: %d (%d to %d)\n", length(unique(df$posted_year)), min(df$posted_year), max(df$posted_year)))
+cat(sprintf("   - Skills: %d unique skills\n", length(unique(df$skill))))
+cat(sprintf("   - Skill Categories: %d\n", length(unique(df$skill_category))))
+cat(sprintf("   - Skill Levels: %d\n", length(unique(df$skill_level))))
 
-cat("\n5. Temporal Trends:\n")
+cat("\n5. Skills Analysis:\n")
+cat(sprintf("   - Total skill records: %d\n", nrow(df)))
+cat(sprintf("   - Average skills per job: %.2f\n", nrow(df) / length(unique(df$job_id))))
+skill_level_salary <- df %>%
+  group_by(skill_level) %>%
+  summarize(avg_sal = mean(salary_avg, na.rm = TRUE)) %>%
+  arrange(desc(avg_sal))
+cat(sprintf("   - Highest paid skill level: %s ($%,.0f)\n", 
+            skill_level_salary$skill_level[1], skill_level_salary$avg_sal[1]))
+cat(sprintf("   - Lowest paid skill level: %s ($%,.0f)\n", 
+            skill_level_salary$skill_level[nrow(skill_level_salary)], 
+            skill_level_salary$avg_sal[nrow(skill_level_salary)]))
+
+skill_cat_salary <- df %>%
+  group_by(skill_category) %>%
+  summarize(avg_sal = mean(salary_avg, na.rm = TRUE)) %>%
+  arrange(desc(avg_sal))
+cat(sprintf("   - Highest paid skill category: %s ($%,.0f)\n", 
+            skill_cat_salary$skill_category[1], skill_cat_salary$avg_sal[1]))
+cat(sprintf("   - Lowest paid skill category: %s ($%,.0f)\n", 
+            skill_cat_salary$skill_category[nrow(skill_cat_salary)], 
+            skill_cat_salary$avg_sal[nrow(skill_cat_salary)]))
+
+cat("\n6. Temporal Trends:\n")
 year_trend_summary <- df %>%
   group_by(posted_year) %>%
   summarize(avg_salary = mean(salary_avg, na.rm = TRUE))
