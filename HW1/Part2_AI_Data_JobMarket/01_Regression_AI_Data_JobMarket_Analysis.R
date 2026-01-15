@@ -128,7 +128,7 @@ tibble(
   )
 
 
-# Plot predicted vs actual for SLR model on test set for log_salary_min
+# Plot predicted vs actual for SLR model on test set for log_salary_max
 ref_line <- tibble(
   label = "Perfect Prediction",
   slope = 1,
@@ -136,8 +136,8 @@ ref_line <- tibble(
 )
 
 tibble(
-  actual = test_df$log_salary_min,
-  predicted = as.numeric(pred_test_slr_salary_min)
+  actual = test_df$log_salary_max,
+  predicted = as.numeric(pred_test_slr_salary_max)
 ) %>%
   ggplot(aes(x = actual, y = predicted)) +
   geom_point(alpha = 0.7) +
@@ -148,9 +148,9 @@ tibble(
   ) +
   scale_color_manual(values = c("Perfect Prediction" = "blue")) +
   labs(
-    title = "Simple Linear Regression (SLR): Predicted vs Actual log_salary_min (Test Set)",
-    x = "Actual log_salary_min",
-    y = "Predicted log_salary_min",
+    title = "Simple Linear Regression (SLR): Predicted vs Actual log_salary_max (Test Set)",
+    x = "Actual log_salary_max",
+    y = "Predicted log_salary_max",
     color = "Legend"
   )
 
@@ -247,7 +247,7 @@ diag_min <- broom::augment(slr_fit_salary_min) %>%
 p1 <- ggplot(diag_min, aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.35) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Residuals vs Fitted",
     x = "Fitted values",
@@ -267,7 +267,7 @@ p2 <- ggplot(diag_min, aes(sample = .std.resid)) +
 # 3) Scale-Location (homoskedasticity)
 p3 <- ggplot(diag_min, aes(x = .fitted, y = sqrt(abs(.std.resid)))) +
   geom_point(alpha = 0.35) +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Scale-Location",
     x = "Fitted values",
@@ -278,7 +278,7 @@ p3 <- ggplot(diag_min, aes(x = .fitted, y = sqrt(abs(.std.resid)))) +
 p4 <- ggplot(diag_min, aes(x = .hat, y = .std.resid)) +
   geom_point(alpha = 0.35) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Residuals vs Leverage",
     x = "Leverage",
@@ -299,7 +299,7 @@ diag_max <- broom::augment(slr_fit_salary_max) %>%
 q1 <- ggplot(diag_max, aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.35) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Residuals vs Fitted",
     x = "Fitted values",
@@ -319,7 +319,7 @@ q2 <- ggplot(diag_max, aes(sample = .std.resid)) +
 # 3) Scale-Location (homoskedasticity)
 q3 <- ggplot(diag_max, aes(x = .fitted, y = sqrt(abs(.std.resid)))) +
   geom_point(alpha = 0.35) +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Scale-Location",
     x = "Fitted values",
@@ -330,7 +330,7 @@ q3 <- ggplot(diag_max, aes(x = .fitted, y = sqrt(abs(.std.resid)))) +
 q4 <- ggplot(diag_max, aes(x = .hat, y = .std.resid)) +
   geom_point(alpha = 0.35) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_smooth(se = FALSE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Residuals vs Leverage",
     x = "Leverage",
