@@ -209,3 +209,10 @@ __marimo__/
 # R
 .Rhistory
 .RData
+
+# Conda environments
+.conda/
+conda-env/
+env/
+.condarc
+.conda/
