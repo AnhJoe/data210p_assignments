@@ -147,6 +147,7 @@
  
 
 
+\usepackage[section]{placeins}
 \KOMAoption{captions}{tableheading}
 \usepackage{textcomp}
 \makeatletter
@@ -194,7 +195,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={DATA210P HW2 - Bike Sharing (hour.csv): Linear Modeling, Selection, Validation, and Ridge \& Lasso},
+  pdftitle={DATA210P-Bike Sharing (hour.csv): Linear Modeling, Selection, Validation, and Ridge \& Lasso},
   pdfauthor={Joe Nguyen, Haesung Becker, Jared Lyon, Tao Chen},
   colorlinks=true,
   linkcolor={blue},
@@ -204,8 +205,8 @@
   pdfcreator={LaTeX via pandoc}}
 
 
-\title{DATA210P HW2 - Bike Sharing (hour.csv): Linear Modeling,
-Selection, Validation, and Ridge \& Lasso}
+\title{DATA210P-Bike Sharing (hour.csv): Linear Modeling, Selection,
+Validation, and Ridge \& Lasso}
 \author{Joe Nguyen, Haesung Becker, Jared Lyon, Tao Chen}
 \date{}
 \begin{document}
@@ -217,8 +218,6 @@ Selection, Validation, and Ridge \& Lasso}
 \setcounter{tocdepth}{3}
 \tableofcontents
 }
-
-\newpage
 
 \section{Project Overview}\label{project-overview}
 
@@ -338,7 +337,7 @@ From data source:
 
 Initialize dataframe and perform initial data exploration:
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-df-shape}Shape and Columns of Data Frame.}
 
@@ -470,147 +469,131 @@ Table~\ref{tbl-ols-fit} summarizes the baseline model fit statistics
 whereas Table~\ref{tbl-ols-coef} provides a coefficient table that's
 sorted for lowest p-values.
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-ols-fit}Baseline OLS model fit statistics.}
 
 \centering{
 
 \begin{verbatim}
+             Model:              OLS     Adj. R-squared:       0.681
+Dependent Variable:              cnt                AIC: 210260.5403
+              Date: 2026-01-30 13:46                BIC: 210578.8240
+  No. Observations:            17379     Log-Likelihood: -1.0509e+05
+          Df Model:               40        F-statistic:       929.0
+      Df Residuals:            17338 Prob (F-statistic):        0.00
+         R-squared:            0.682              Scale:      10491.
 
---- Statsmodels Summary ---
-
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                    cnt   R-squared:                       0.682
-Model:                            OLS   Adj. R-squared:                  0.681
-Method:                 Least Squares   F-statistic:                     929.0
-Date:                Fri, 30 Jan 2026   Prob (F-statistic):               0.00
-Time:                        01:01:48   Log-Likelihood:            -1.0509e+05
-No. Observations:               17379   AIC:                         2.103e+05
-Df Residuals:                   17338   BIC:                         2.106e+05
-Df Model:                          40                                         
-Covariance Type:            nonrobust                                         
-======================================================================================
-                         coef    std err          t      P>|t|      [0.025      0.975]
---------------------------------------------------------------------------------------
-Intercept            -87.3998      6.258    -13.966      0.000     -99.666     -75.134
-C(weathersit)[T.2]   -10.8506      1.928     -5.629      0.000     -14.629      -7.072
-C(weathersit)[T.3]   -66.4743      3.248    -20.468      0.000     -72.840     -60.108
-C(weathersit)[T.4]   -70.5084     59.255     -1.190      0.234    -186.654      45.637
-C(hr)[T.1]           -17.5302      5.382     -3.257      0.001     -28.080      -6.981
-C(hr)[T.2]           -26.6938      5.400     -4.943      0.000     -37.278     -16.110
-C(hr)[T.3]           -37.3660      5.439     -6.870      0.000     -48.027     -26.705
-C(hr)[T.4]           -40.6120      5.442     -7.462      0.000     -51.279     -29.945
-C(hr)[T.5]           -23.8207      5.405     -4.407      0.000     -34.415     -13.226
-C(hr)[T.6]            35.0407      5.392      6.498      0.000      24.471      45.610
-C(hr)[T.7]           170.2513      5.382     31.631      0.000     159.701     180.802
-C(hr)[T.8]           310.9038      5.380     57.793      0.000     300.359     321.448
-C(hr)[T.9]           163.4304      5.384     30.354      0.000     152.877     173.984
-C(hr)[T.10]          108.8632      5.404     20.146      0.000      98.271     119.455
-C(hr)[T.11]          134.5404      5.437     24.746      0.000     123.884     145.197
-C(hr)[T.12]          174.0695      5.475     31.795      0.000     163.338     184.800
-C(hr)[T.13]          169.1885      5.502     30.751      0.000     158.404     179.973
-C(hr)[T.14]          153.3648      5.527     27.750      0.000     142.532     164.198
-C(hr)[T.15]          162.7674      5.534     29.412      0.000     151.920     173.615
-C(hr)[T.16]          224.7619      5.526     40.677      0.000     213.931     235.592
-C(hr)[T.17]          378.3610      5.499     68.805      0.000     367.582     389.140
-C(hr)[T.18]          346.4628      5.470     63.334      0.000     335.740     357.185
-C(hr)[T.19]          237.6637      5.428     43.784      0.000     227.024     248.303
-C(hr)[T.20]          157.9849      5.405     29.229      0.000     147.390     168.579
-C(hr)[T.21]          108.3892      5.386     20.125      0.000      97.832     118.946
-C(hr)[T.22]           71.2341      5.378     13.245      0.000      60.693      81.776
-C(hr)[T.23]           32.2676      5.375      6.003      0.000      21.732      42.803
-C(weekday)[T.1]    -2.473e+13   9.87e+13     -0.251      0.802   -2.18e+14    1.69e+14
-C(weekday)[T.2]    -2.473e+13   9.87e+13     -0.251      0.802   -2.18e+14    1.69e+14
-C(weekday)[T.3]    -2.473e+13   9.87e+13     -0.251      0.802   -2.18e+14    1.69e+14
-C(weekday)[T.4]    -2.473e+13   9.87e+13     -0.251      0.802   -2.18e+14    1.69e+14
-C(weekday)[T.5]    -2.473e+13   9.87e+13     -0.251      0.802   -2.18e+14    1.69e+14
-C(weekday)[T.6]       16.1757      2.896      5.586      0.000      10.500      21.852
-C(season)[T.2]        42.8726      2.822     15.190      0.000      37.340      48.405
-C(season)[T.3]        27.3446      3.648      7.495      0.000      20.194      34.495
-C(season)[T.4]        65.7835      2.440     26.966      0.000      61.002      70.565
-C(yr)[T.1]            85.4858      1.569     54.498      0.000      82.411      88.560
-temp                 244.9964      7.111     34.454      0.000     231.058     258.935
-hum                  -68.7842      5.440    -12.645      0.000     -79.447     -58.122
-windspeed            -33.9519      6.849     -4.957      0.000     -47.378     -20.526
-workingday          2.473e+13   9.87e+13      0.251      0.802   -1.69e+14    2.18e+14
-holiday             2.473e+13   9.87e+13      0.251      0.802   -1.69e+14    2.18e+14
-==============================================================================
-Omnibus:                     1231.774   Durbin-Watson:                   0.498
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):             2622.294
-Skew:                           0.473   Prob(JB):                         0.00
-Kurtosis:                       4.652   Cond. No.                     5.74e+14
-==============================================================================
-
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.54e-25. This might indicate that there are
-strong multicollinearity problems or that the design matrix is singular.
 \end{verbatim}
 
 }
 
 \end{table}%
-
-\begin{table}
-
-\caption{\label{tbl-ols-coef}Baseline OLS model fit coefficient table.}
-
-\centering{
 
 \begin{verbatim}
 
 --- Coefficient Table ---
-
-                  term      estimate       std_err        p_value      conf_low     conf_high
-0           C(hr)[T.8]  3.109038e+02  5.379574e+00   0.000000e+00  3.003593e+02  3.214483e+02
-1          C(hr)[T.18]  3.464628e+02  5.470435e+00   0.000000e+00  3.357402e+02  3.571854e+02
-2          C(hr)[T.19]  2.376637e+02  5.428111e+00   0.000000e+00  2.270241e+02  2.483034e+02
-3          C(hr)[T.16]  2.247619e+02  5.525528e+00   0.000000e+00  2.139313e+02  2.355925e+02
-4          C(hr)[T.17]  3.783610e+02  5.499041e+00   0.000000e+00  3.675824e+02  3.891397e+02
-5           C(yr)[T.1]  8.548581e+01  1.568613e+00   0.000000e+00  8.241117e+01  8.856045e+01
-6                 temp  2.449964e+02  7.110919e+00  1.136117e-251  2.310583e+02  2.589345e+02
-7          C(hr)[T.12]  1.740695e+02  5.474718e+00  1.127114e-215  1.633385e+02  1.848005e+02
-8           C(hr)[T.7]  1.702513e+02  5.382477e+00  1.567761e-213  1.597011e+02  1.808015e+02
-9          C(hr)[T.13]  1.691885e+02  5.501973e+00  3.130365e-202  1.584041e+02  1.799730e+02
-10          C(hr)[T.9]  1.634304e+02  5.384154e+00  3.118441e-197  1.528769e+02  1.739839e+02
-11         C(hr)[T.15]  1.627674e+02  5.534014e+00  1.350689e-185  1.519202e+02  1.736147e+02
-12         C(hr)[T.20]  1.579849e+02  5.405104e+00  2.277420e-183  1.473904e+02  1.685795e+02
-13         C(hr)[T.14]  1.533648e+02  5.526624e+00  7.170303e-166  1.425321e+02  1.641976e+02
-14      C(season)[T.4]  6.578348e+01  2.439501e+00  6.302680e-157  6.100181e+01  7.056514e+01
-15         C(hr)[T.11]  1.345404e+02  5.436805e+00  6.824192e-133  1.238837e+02  1.451971e+02
-16  C(weathersit)[T.3] -6.647434e+01  3.247787e+00   5.115518e-92 -7.284033e+01 -6.010835e+01
-17         C(hr)[T.10]  1.088632e+02  5.403667e+00   3.049689e-89  9.827149e+01  1.194550e+02
-18         C(hr)[T.21]  1.083892e+02  5.385804e+00   4.632920e-89  9.783245e+01  1.189459e+02
-19      C(season)[T.2]  4.287260e+01  2.822412e+00   8.866599e-52  3.734039e+01  4.840481e+01
-20           Intercept -8.739983e+01  6.257868e+00   4.333326e-44 -9.966588e+01 -7.513378e+01
-21         C(hr)[T.22]  7.123408e+01  5.378033e+00   7.494517e-40  6.069260e+01  8.177557e+01
-22                 hum -6.878424e+01  5.439703e+00   1.730957e-36 -7.944660e+01 -5.812187e+01
-23      C(season)[T.3]  2.734460e+01  3.648229e+00   6.932776e-14  2.019370e+01  3.449549e+01
-24          C(hr)[T.4] -4.061204e+01  5.442219e+00   8.897576e-14 -5.127934e+01 -2.994474e+01
-25          C(hr)[T.3] -3.736604e+01  5.438879e+00   6.630284e-12 -4.802679e+01 -2.670529e+01
-26          C(hr)[T.6]  3.504071e+01  5.392208e+00   8.339101e-11  2.447144e+01  4.560998e+01
-27         C(hr)[T.23]  3.226763e+01  5.374962e+00   1.971727e-09  2.173216e+01  4.280309e+01
-28  C(weathersit)[T.2] -1.085061e+01  1.927762e+00   1.844831e-08 -1.462922e+01 -7.072004e+00
-29     C(weekday)[T.6]  1.617572e+01  2.895707e+00   2.357089e-08  1.049984e+01  2.185160e+01
-30           windspeed -3.395195e+01  6.849485e+00   7.231704e-07 -4.737763e+01 -2.052627e+01
-31          C(hr)[T.2] -2.669381e+01  5.399829e+00   7.746697e-07 -3.727802e+01 -1.610960e+01
-32          C(hr)[T.5] -2.382073e+01  5.405069e+00   1.053882e-05 -3.441521e+01 -1.322625e+01
-33          C(hr)[T.1] -1.753016e+01  5.382121e+00   1.127691e-03 -2.807966e+01 -6.980661e+00
-34  C(weathersit)[T.4] -7.050842e+01  5.925504e+01   2.340964e-01 -1.866543e+02  4.563743e+01
-35          workingday  2.472602e+13  9.865948e+13   8.021110e-01 -1.686565e+14  2.181085e+14
-36     C(weekday)[T.1] -2.472602e+13  9.865948e+13   8.021110e-01 -2.181085e+14  1.686565e+14
-37     C(weekday)[T.2] -2.472602e+13  9.865948e+13   8.021110e-01 -2.181085e+14  1.686565e+14
-38     C(weekday)[T.3] -2.472602e+13  9.865948e+13   8.021110e-01 -2.181085e+14  1.686565e+14
-39     C(weekday)[T.4] -2.472602e+13  9.865948e+13   8.021110e-01 -2.181085e+14  1.686565e+14
-40     C(weekday)[T.5] -2.472602e+13  9.865948e+13   8.021110e-01 -2.181085e+14  1.686565e+14
-41             holiday  2.472602e+13  9.865948e+13   8.021110e-01 -1.686565e+14  2.181085e+14
 \end{verbatim}
 
-}
+\begin{longtable}[]{@{}lllllll@{}}
 
-\end{table}%
+\caption{\label{tbl-ols-coef}Baseline OLS model fit coefficient table.}
+
+\tabularnewline
+
+\toprule\noalign{}
+& term & estimate & std\_err & p\_value & 95\% CI\_low & 95\%
+CI\_high \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & C(hr){[}T.8{]} & 3.109038e+02 & 5.379574e+00 & 0.000000e+00 &
+3.003593e+02 & 3.214483e+02 \\
+1 & C(hr){[}T.18{]} & 3.464628e+02 & 5.470435e+00 & 0.000000e+00 &
+3.357402e+02 & 3.571854e+02 \\
+2 & C(hr){[}T.19{]} & 2.376637e+02 & 5.428111e+00 & 0.000000e+00 &
+2.270241e+02 & 2.483034e+02 \\
+3 & C(hr){[}T.16{]} & 2.247619e+02 & 5.525528e+00 & 0.000000e+00 &
+2.139313e+02 & 2.355925e+02 \\
+4 & C(hr){[}T.17{]} & 3.783610e+02 & 5.499041e+00 & 0.000000e+00 &
+3.675824e+02 & 3.891397e+02 \\
+5 & C(yr){[}T.1{]} & 8.548581e+01 & 1.568613e+00 & 0.000000e+00 &
+8.241117e+01 & 8.856045e+01 \\
+6 & temp & 2.449964e+02 & 7.110919e+00 & 1.136117e-251 & 2.310583e+02 &
+2.589345e+02 \\
+7 & C(hr){[}T.12{]} & 1.740695e+02 & 5.474718e+00 & 1.127114e-215 &
+1.633385e+02 & 1.848005e+02 \\
+8 & C(hr){[}T.7{]} & 1.702513e+02 & 5.382477e+00 & 1.567761e-213 &
+1.597011e+02 & 1.808015e+02 \\
+9 & C(hr){[}T.13{]} & 1.691885e+02 & 5.501973e+00 & 3.130365e-202 &
+1.584041e+02 & 1.799730e+02 \\
+10 & C(hr){[}T.9{]} & 1.634304e+02 & 5.384154e+00 & 3.118441e-197 &
+1.528769e+02 & 1.739839e+02 \\
+11 & C(hr){[}T.15{]} & 1.627674e+02 & 5.534014e+00 & 1.350689e-185 &
+1.519202e+02 & 1.736147e+02 \\
+12 & C(hr){[}T.20{]} & 1.579849e+02 & 5.405104e+00 & 2.277420e-183 &
+1.473904e+02 & 1.685795e+02 \\
+13 & C(hr){[}T.14{]} & 1.533648e+02 & 5.526624e+00 & 7.170303e-166 &
+1.425321e+02 & 1.641976e+02 \\
+14 & C(season){[}T.4{]} & 6.578348e+01 & 2.439501e+00 & 6.302680e-157 &
+6.100181e+01 & 7.056514e+01 \\
+15 & C(hr){[}T.11{]} & 1.345404e+02 & 5.436805e+00 & 6.824192e-133 &
+1.238837e+02 & 1.451971e+02 \\
+16 & C(weathersit){[}T.3{]} & -6.647434e+01 & 3.247787e+00 &
+5.115518e-92 & -7.284033e+01 & -6.010835e+01 \\
+17 & C(hr){[}T.10{]} & 1.088632e+02 & 5.403667e+00 & 3.049689e-89 &
+9.827149e+01 & 1.194550e+02 \\
+18 & C(hr){[}T.21{]} & 1.083892e+02 & 5.385804e+00 & 4.632920e-89 &
+9.783245e+01 & 1.189459e+02 \\
+19 & C(season){[}T.2{]} & 4.287260e+01 & 2.822412e+00 & 8.866599e-52 &
+3.734039e+01 & 4.840481e+01 \\
+20 & Intercept & -8.739983e+01 & 6.257868e+00 & 4.333326e-44 &
+-9.966588e+01 & -7.513378e+01 \\
+21 & C(hr){[}T.22{]} & 7.123408e+01 & 5.378033e+00 & 7.494517e-40 &
+6.069260e+01 & 8.177557e+01 \\
+22 & hum & -6.878424e+01 & 5.439703e+00 & 1.730957e-36 & -7.944660e+01 &
+-5.812187e+01 \\
+23 & C(season){[}T.3{]} & 2.734460e+01 & 3.648229e+00 & 6.932776e-14 &
+2.019370e+01 & 3.449549e+01 \\
+24 & C(hr){[}T.4{]} & -4.061204e+01 & 5.442219e+00 & 8.897576e-14 &
+-5.127934e+01 & -2.994474e+01 \\
+25 & C(hr){[}T.3{]} & -3.736604e+01 & 5.438879e+00 & 6.630284e-12 &
+-4.802679e+01 & -2.670529e+01 \\
+26 & C(hr){[}T.6{]} & 3.504071e+01 & 5.392208e+00 & 8.339101e-11 &
+2.447144e+01 & 4.560998e+01 \\
+27 & C(hr){[}T.23{]} & 3.226763e+01 & 5.374962e+00 & 1.971727e-09 &
+2.173216e+01 & 4.280309e+01 \\
+28 & C(weathersit){[}T.2{]} & -1.085061e+01 & 1.927762e+00 &
+1.844831e-08 & -1.462922e+01 & -7.072004e+00 \\
+29 & C(weekday){[}T.6{]} & 1.617572e+01 & 2.895707e+00 & 2.357089e-08 &
+1.049984e+01 & 2.185160e+01 \\
+30 & windspeed & -3.395195e+01 & 6.849485e+00 & 7.231704e-07 &
+-4.737763e+01 & -2.052627e+01 \\
+31 & C(hr){[}T.2{]} & -2.669381e+01 & 5.399829e+00 & 7.746697e-07 &
+-3.727802e+01 & -1.610960e+01 \\
+32 & C(hr){[}T.5{]} & -2.382073e+01 & 5.405069e+00 & 1.053882e-05 &
+-3.441521e+01 & -1.322625e+01 \\
+33 & C(hr){[}T.1{]} & -1.753016e+01 & 5.382121e+00 & 1.127691e-03 &
+-2.807966e+01 & -6.980661e+00 \\
+34 & C(weathersit){[}T.4{]} & -7.050842e+01 & 5.925504e+01 &
+2.340964e-01 & -1.866543e+02 & 4.563743e+01 \\
+35 & workingday & 2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-1.686565e+14 & 2.181085e+14 \\
+36 & C(weekday){[}T.1{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+37 & C(weekday){[}T.2{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+38 & C(weekday){[}T.3{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+39 & C(weekday){[}T.4{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+40 & C(weekday){[}T.5{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+41 & holiday & 2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-1.686565e+14 & 2.181085e+14 \\
+
+\end{longtable}
 
 \subsection{Interpretation of
 coefficients}\label{interpretation-of-coefficients}
@@ -983,7 +966,7 @@ better} - likely due to improved normality and stabilizing residual
 variance.
 
 In contrast, the out-of-sample evaluation using k-fold cross-validated
-RMSE is \textbf{deferred to part IV} and will serve as the primary
+RMSE is \textbf{deferred to section 5} and will serve as the primary
 criterion for predictive performance and model selection.
 
 \section{Collinearity Assessment}\label{collinearity-assessment}
@@ -991,7 +974,7 @@ criterion for predictive performance and model selection.
 \subsection{Correlation matrix with numeric
 predictors}\label{correlation-matrix-with-numeric-predictors}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-corr-numeric-predictors}Correlation matrix for
 numeric predictors.}
@@ -1031,14 +1014,14 @@ for predictors in the log-transformed OLS model.}
 28 & C(weekday){[}T.2{]} & inf \\
 41 & holiday & inf \\
 40 & workingday & inf \\
-34 & C(season){[}T.3{]} & 4.228093 \\
-37 & temp & 3.105377 \\
-33 & C(season){[}T.2{]} & 2.498219 \\
-18 & C(hr){[}T.15{]} & 2.038059 \\
-19 & C(hr){[}T.16{]} & 2.033286 \\
-17 & C(hr){[}T.14{]} & 2.031779 \\
-20 & C(hr){[}T.17{]} & 2.014788 \\
-16 & C(hr){[}T.13{]} & 2.014241 \\
+34 & C(season){[}T.3{]} & 4.228092 \\
+37 & temp & 3.105462 \\
+33 & C(season){[}T.2{]} & 2.498218 \\
+18 & C(hr){[}T.15{]} & 2.038046 \\
+19 & C(hr){[}T.16{]} & 2.033339 \\
+17 & C(hr){[}T.14{]} & 2.031766 \\
+20 & C(hr){[}T.17{]} & 2.014792 \\
+16 & C(hr){[}T.13{]} & 2.014246 \\
 
 \end{longtable}
 
@@ -1078,13 +1061,12 @@ considered in moderate VIF values (\textasciitilde{} 2-5) or low values
 it's important to highlight the potential collinearity between season
 and temp at the top of the list. Since temperature changes with the
 season, these two variables are likely to provide overlapping
-information. Something we will explore more in section IV.3 for model
-selection.
+information. Something we will explore more in model selection.
 
 As a result, calendar-related categorical and binary variables with
 perfect multicollinearity, due to overlapping definitions, can lead to
 \textbf{variance inflation of standard errors and complicated
-coefficient interpretations} as discusses in section I.4. Although
+coefficient interpretations} as discussed in previous sections. Although
 collinearity complicates interpretability and statistical inference, it
 \textbf{does not necessarily harm predictive performance} because
 predictions depend on combined linear predictors with redundant
@@ -1141,7 +1123,7 @@ Baseline log cnt OLS model RMSE: 0.5925789002917841 SD: 0.006101317168347299
 
 \subsection{Stepwise selection}\label{stepwise-selection}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-model-selection-rmse}Stepwise five-fold
 cross-validation with Root Mean Squared Error (RMSE) for candidate
@@ -1183,7 +1165,7 @@ log-transformed OLS models.}
 
 \end{figure}%
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-model-selection-mse}Stepwise five-fold
 cross-validation with Mean Squared Error (MSE) for candidate
@@ -1204,7 +1186,7 @@ ADD  windspeed            -> MSE=0.351882 (sd=0.007098)
 ADD  workingday           -> MSE=0.351195 (sd=0.007287)
 
 Best formula: log_cnt ~ C(hr) + temp + C(yr) + C(weathersit) + C(season) + C(weekday) + hum + windspeed + workingday
-MSE: 0.3511951579346585 SD: 0.007286777545519475
+MSE: 0.35119515793465844 SD: 0.007286777545519413
 \end{verbatim}
 
 }
@@ -1225,7 +1207,7 @@ log-transformed OLS models.}
 
 \end{figure}%
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-model-selection-aic-bic}Stepwise five-fold
 cross-validation with BIC for candidate log-transformed OLS models.}
@@ -1246,7 +1228,7 @@ ADD  workingday           -> BIC=31444.832698
 
 Best formula: log_cnt ~ C(hr) + temp + C(yr) + C(weathersit) + C(season) + C(weekday) + hum + windspeed + workingday
 
-Score: 31444.83269754891
+Score: 31444.832697548914
 \end{verbatim}
 
 }
@@ -1268,8 +1250,8 @@ log-transformed OLS models.}
 \end{figure}%
 
 Our model selection was performed using \textbf{stepwise 5-fold
-cross-validation (CV) with RMSE} as the selection criterion as mentioned
-in section III.3 and shown in Table~\ref{tbl-model-selection-rmse} and
+cross-validation (CV) with RMSE} as the selection criterion and shown in
+Table~\ref{tbl-model-selection-rmse} and
 Figure~\ref{fig-stepwise-cv-rmse-step}. Given the size of the dataset,
 5-fold CV was adequate for our analysis within considerations for time
 and resources. The motivation for using RMSE is that CV RMSE directly
@@ -1326,12 +1308,12 @@ Adjusted R\^{}2, AIC, and BIC.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0 & Baseline log OLS & 0.825786 & 31127.080796 & 31445.364528 \\
+0 & Baseline log OLS & 0.825787 & 31126.973333 & 31445.257065 \\
 1 & Selected model & 0.822891 & 31404.516917 & 31652.933488 \\
 
 \end{longtable}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-model-selection-analysis-out-of-sample}CV RMSE
 evaluation for selected OLS model for log cnt.}
@@ -1360,7 +1342,7 @@ comparison is shown in
 Table~\ref{tbl-model-selection-analysis-in-sample}, whereas the CV RMSE
 comparison is presented in Table~\ref{tbl-model-selection-rmse} and
 Table~\ref{tbl-model-selection-analysis-out-of-sample}, as discussed in
-section IV.3.
+previous sections.
 
 The adjusted R\^{}2 of the selected model slightly lower than the
 baseline model, reflecting the intentional removal of predictors.
@@ -1397,7 +1379,7 @@ weaker variables that we removed to zero as part of feature selection.
 
 \subsection{Ridge Regression}\label{ridge-regression}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-ridge-cv-results}Ridge regression: cross-validated
 selection of the regularization parameter (alpha) and predictive
@@ -1431,7 +1413,7 @@ parameter.}
 
 \subsection{Lasso regression}\label{lasso-regression}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tbl-lasso-cv-results}Lasso regression: cross-validated
 selection of the regularization parameter (alpha) and predictive
@@ -1443,8 +1425,8 @@ performance.}
 Lasso Regression with 5-fold CV selection
 alpha_min: 0.0009326033468832199
 alpha_1se: 0.010476157527896652
-min mean MSE: 0.3698843993068294
-1-SE threshold: 0.3898582268015863
+min mean MSE: 0.3698843993068296
+1-SE threshold: 0.3898582268015865
 \end{verbatim}
 
 }
@@ -1486,7 +1468,7 @@ indicating alpha\_min and alpha\_1se.}
 selected by lasso regression under the minimum cross-validated error
 rule (alpha\_min) and the one-standard-error rule (alpha\_1se). For each
 model, retained predictors and their corresponding coefficients are
-shown; blank cells indicate predictors not selected under the given
+shown; NaN cells indicate predictors not selected under the given
 regularization level.}
 
 \tabularnewline
@@ -1591,15 +1573,15 @@ one-standard-error (1-SE) lasso solution.}
 
 \end{longtable}
 
-In this section (V), we explore Ridge and Lasso regularization
-techniques intended to \textbf{improve generalization in the presence of
-predictors with strong collinearity}. By penalizing large coefficients
-and reducing variance, regularization stabilizes estimates of correlated
-predictors (e.g., many encoded hour (hr) or categorical predictors).
-Additionally, it provides a bias-variance tradeoff that could help
-ensure a balance in-sample fit to reliable out-of-sample predictive
-performance. Both regularization techniques were \textbf{performed on
-the baseline log transformed OLS model} before reduction in predictors.
+In this section, we explore Ridge and Lasso regularization techniques
+intended to \textbf{improve generalization in the presence of predictors
+with strong collinearity}. By penalizing large coefficients and reducing
+variance, regularization stabilizes estimates of correlated predictors
+(e.g., many encoded hour (hr) or categorical predictors). Additionally,
+it provides a bias-variance tradeoff that could help ensure a balance
+in-sample fit to reliable out-of-sample predictive performance. Both
+regularization techniques were \textbf{performed on the baseline log
+transformed OLS model} before reduction in predictors.
 
 In Table~\ref{tbl-ridge-cv-results}, we leveraged a 5-fold CV to select
 a near optimal regularization parameter (alpha = 54.62) while taking
