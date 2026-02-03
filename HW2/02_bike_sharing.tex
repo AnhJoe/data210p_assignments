@@ -231,6 +231,7 @@ Validation, and Ridge \& Lasso}
 \ImportTok{import}\NormalTok{ pandas }\ImportTok{as}\NormalTok{ pd}
 \ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
 \ImportTok{import}\NormalTok{ seaborn }\ImportTok{as}\NormalTok{ sns}
+\ImportTok{import}\NormalTok{ tabulate}
 
 \CommentTok{\# Third{-}party imports}
 \ImportTok{from}\NormalTok{ dataclasses }\ImportTok{import}\NormalTok{ dataclass}
@@ -361,7 +362,7 @@ Visualization}\label{initial-exploratory-data-analysis-eda-with-visualization}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-distributions-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-distributions-output-1.png}}
 
 }
 
@@ -374,7 +375,7 @@ categorical predictors.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-predictor-vs-cnt-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-predictor-vs-cnt-output-1.png}}
 
 }
 
@@ -482,8 +483,8 @@ sorted for lowest p-values.
 \bottomrule\noalign{}
 \endlastfoot
 & Model: & OLS & Adj. R-squared: & 0.681 \\
-& Dependent Variable: & cnt & AIC: & 210260.6731 \\
-& Date: & 2026-02-03 06:12 & BIC: & 210578.9569 \\
+& Dependent Variable: & cnt & AIC: & 210260.5403 \\
+& Date: & 2026-02-03 12:28 & BIC: & 210578.8240 \\
 & No. Observations: & 17379 & Log-Likelihood: & -1.0509e+05 \\
 & Df Model: & 40 & F-statistic: & 929.0 \\
 & Df Residuals: & 17338 & Prob (F-statistic): & 0.00 \\
@@ -509,90 +510,90 @@ CI\_high \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0 & C(hr){[}T.8{]} & 3.108769e+02 & 5.379823e+00 & 0.000000e+00 &
-3.003319e+02 & 3.214219e+02 \\
-1 & C(hr){[}T.18{]} & 3.464209e+02 & 5.471640e+00 & 0.000000e+00 &
-3.356959e+02 & 3.571459e+02 \\
-2 & C(hr){[}T.19{]} & 2.376383e+02 & 5.428750e+00 & 0.000000e+00 &
-2.269974e+02 & 2.482792e+02 \\
-3 & C(hr){[}T.16{]} & 2.247542e+02 & 5.524849e+00 & 0.000000e+00 &
-2.139249e+02 & 2.355834e+02 \\
-4 & C(hr){[}T.17{]} & 3.783272e+02 & 5.500136e+00 & 0.000000e+00 &
-3.675464e+02 & 3.891080e+02 \\
-5 & C(yr){[}T.1{]} & 8.547271e+01 & 1.569074e+00 & 0.000000e+00 &
-8.239717e+01 & 8.854825e+01 \\
-6 & temp & 2.449783e+02 & 7.111104e+00 & 1.269475e-251 & 2.310399e+02 &
-2.589168e+02 \\
-7 & C(hr){[}T.12{]} & 1.740754e+02 & 5.472995e+00 & 8.072075e-216 &
-1.633478e+02 & 1.848031e+02 \\
-8 & C(hr){[}T.7{]} & 1.702419e+02 & 5.382176e+00 & 1.566686e-213 &
-1.596923e+02 & 1.807915e+02 \\
-9 & C(hr){[}T.13{]} & 1.691712e+02 & 5.502208e+00 & 3.566727e-202 &
-1.583863e+02 & 1.799561e+02 \\
-10 & C(hr){[}T.9{]} & 1.634117e+02 & 5.384363e+00 & 3.567030e-197 &
-1.528578e+02 & 1.739656e+02 \\
-11 & C(hr){[}T.15{]} & 1.627307e+02 & 5.535210e+00 & 1.944039e-185 &
-1.518812e+02 & 1.735803e+02 \\
-12 & C(hr){[}T.20{]} & 1.579875e+02 & 5.404135e+00 & 1.942214e-183 &
-1.473948e+02 & 1.685801e+02 \\
-13 & C(hr){[}T.14{]} & 1.533608e+02 & 5.526204e+00 & 6.910956e-166 &
-1.425289e+02 & 1.641927e+02 \\
-14 & C(season){[}T.4{]} & 6.576345e+01 & 2.439673e+00 & 8.189151e-157 &
-6.098145e+01 & 7.054545e+01 \\
-15 & C(hr){[}T.11{]} & 1.344985e+02 & 5.438373e+00 & 9.734098e-133 &
-1.238387e+02 & 1.451583e+02 \\
-16 & C(weathersit){[}T.3{]} & -6.647957e+01 & 3.247286e+00 &
-4.649519e-92 & -7.284458e+01 & -6.011456e+01 \\
-17 & C(hr){[}T.10{]} & 1.088263e+02 & 5.404896e+00 & 3.820340e-89 &
-9.823211e+01 & 1.194204e+02 \\
-18 & C(hr){[}T.21{]} & 1.083636e+02 & 5.386452e+00 & 5.336546e-89 &
-9.780557e+01 & 1.189215e+02 \\
-19 & C(season){[}T.2{]} & 4.288283e+01 & 2.822354e+00 & 8.356966e-52 &
-3.735073e+01 & 4.841492e+01 \\
-20 & Intercept & -8.728836e+01 & 6.259802e+00 & 5.889477e-44 &
--9.955820e+01 & -7.501852e+01 \\
-21 & C(hr){[}T.22{]} & 7.121541e+01 & 5.378358e+00 & 7.928915e-40 &
-6.067328e+01 & 8.175753e+01 \\
-22 & hum & -6.875997e+01 & 5.440208e+00 & 1.858384e-36 & -7.942332e+01 &
--5.809661e+01 \\
-23 & C(season){[}T.3{]} & 2.735863e+01 & 3.648333e+00 & 6.743920e-14 &
-2.020753e+01 & 3.450973e+01 \\
-24 & C(hr){[}T.4{]} & -4.062476e+01 & 5.442180e+00 & 8.737982e-14 &
--5.129198e+01 & -2.995754e+01 \\
-25 & C(hr){[}T.3{]} & -3.740478e+01 & 5.440248e+00 & 6.384922e-12 &
--4.806822e+01 & -2.674134e+01 \\
-26 & C(hr){[}T.6{]} & 3.500036e+01 & 5.393690e+00 & 8.867151e-11 &
-2.442818e+01 & 4.557253e+01 \\
-27 & C(hr){[}T.23{]} & 3.224807e+01 & 5.375260e+00 & 2.020443e-09 &
-2.171202e+01 & 4.278412e+01 \\
-28 & C(weathersit){[}T.2{]} & -1.084695e+01 & 1.927801e+00 &
-1.866446e-08 & -1.462564e+01 & -7.068268e+00 \\
-29 & C(weekday){[}T.6{]} & 1.617481e+01 & 2.895572e+00 & 2.357811e-08 &
-1.049920e+01 & 2.185042e+01 \\
-30 & windspeed & -3.396498e+01 & 6.849612e+00 & 7.164775e-07 &
--4.739091e+01 & -2.053905e+01 \\
-31 & C(hr){[}T.2{]} & -2.671655e+01 & 5.400340e+00 & 7.599465e-07 &
--3.730176e+01 & -1.613134e+01 \\
-32 & C(hr){[}T.5{]} & -2.384386e+01 & 5.405587e+00 & 1.035306e-05 &
--3.443935e+01 & -1.324836e+01 \\
-33 & C(hr){[}T.1{]} & -1.755370e+01 & 5.382570e+00 & 1.111514e-03 &
--2.810408e+01 & -7.003319e+00 \\
-34 & C(weathersit){[}T.4{]} & -7.044481e+01 & 5.925509e+01 &
-2.345190e-01 & -1.865908e+02 & 4.570114e+01 \\
-35 & workingday & 3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--1.537246e+14 & 2.324653e+14 \\
-36 & C(weekday){[}T.1{]} & -3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--2.324653e+14 & 1.537246e+14 \\
-37 & C(weekday){[}T.2{]} & -3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--2.324653e+14 & 1.537246e+14 \\
-38 & C(weekday){[}T.3{]} & -3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--2.324653e+14 & 1.537246e+14 \\
-39 & C(weekday){[}T.4{]} & -3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--2.324653e+14 & 1.537246e+14 \\
-40 & C(weekday){[}T.5{]} & -3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--2.324653e+14 & 1.537246e+14 \\
-41 & holiday & 3.937032e+13 & 9.851277e+13 & 6.894216e-01 &
--1.537246e+14 & 2.324653e+14 \\
+0 & C(hr){[}T.8{]} & 3.109038e+02 & 5.379574e+00 & 0.000000e+00 &
+3.003593e+02 & 3.214483e+02 \\
+1 & C(hr){[}T.18{]} & 3.464628e+02 & 5.470435e+00 & 0.000000e+00 &
+3.357402e+02 & 3.571854e+02 \\
+2 & C(hr){[}T.19{]} & 2.376637e+02 & 5.428111e+00 & 0.000000e+00 &
+2.270241e+02 & 2.483034e+02 \\
+3 & C(hr){[}T.16{]} & 2.247619e+02 & 5.525528e+00 & 0.000000e+00 &
+2.139313e+02 & 2.355925e+02 \\
+4 & C(hr){[}T.17{]} & 3.783610e+02 & 5.499041e+00 & 0.000000e+00 &
+3.675824e+02 & 3.891397e+02 \\
+5 & C(yr){[}T.1{]} & 8.548581e+01 & 1.568613e+00 & 0.000000e+00 &
+8.241117e+01 & 8.856045e+01 \\
+6 & temp & 2.449964e+02 & 7.110919e+00 & 1.136117e-251 & 2.310583e+02 &
+2.589345e+02 \\
+7 & C(hr){[}T.12{]} & 1.740695e+02 & 5.474718e+00 & 1.127114e-215 &
+1.633385e+02 & 1.848005e+02 \\
+8 & C(hr){[}T.7{]} & 1.702513e+02 & 5.382477e+00 & 1.567761e-213 &
+1.597011e+02 & 1.808015e+02 \\
+9 & C(hr){[}T.13{]} & 1.691885e+02 & 5.501973e+00 & 3.130365e-202 &
+1.584041e+02 & 1.799730e+02 \\
+10 & C(hr){[}T.9{]} & 1.634304e+02 & 5.384154e+00 & 3.118441e-197 &
+1.528769e+02 & 1.739839e+02 \\
+11 & C(hr){[}T.15{]} & 1.627674e+02 & 5.534014e+00 & 1.350689e-185 &
+1.519202e+02 & 1.736147e+02 \\
+12 & C(hr){[}T.20{]} & 1.579849e+02 & 5.405104e+00 & 2.277420e-183 &
+1.473904e+02 & 1.685795e+02 \\
+13 & C(hr){[}T.14{]} & 1.533648e+02 & 5.526624e+00 & 7.170303e-166 &
+1.425321e+02 & 1.641976e+02 \\
+14 & C(season){[}T.4{]} & 6.578348e+01 & 2.439501e+00 & 6.302680e-157 &
+6.100181e+01 & 7.056514e+01 \\
+15 & C(hr){[}T.11{]} & 1.345404e+02 & 5.436805e+00 & 6.824192e-133 &
+1.238837e+02 & 1.451971e+02 \\
+16 & C(weathersit){[}T.3{]} & -6.647434e+01 & 3.247787e+00 &
+5.115518e-92 & -7.284033e+01 & -6.010835e+01 \\
+17 & C(hr){[}T.10{]} & 1.088632e+02 & 5.403667e+00 & 3.049689e-89 &
+9.827149e+01 & 1.194550e+02 \\
+18 & C(hr){[}T.21{]} & 1.083892e+02 & 5.385804e+00 & 4.632920e-89 &
+9.783245e+01 & 1.189459e+02 \\
+19 & C(season){[}T.2{]} & 4.287260e+01 & 2.822412e+00 & 8.866599e-52 &
+3.734039e+01 & 4.840481e+01 \\
+20 & Intercept & -8.739983e+01 & 6.257868e+00 & 4.333326e-44 &
+-9.966588e+01 & -7.513378e+01 \\
+21 & C(hr){[}T.22{]} & 7.123408e+01 & 5.378033e+00 & 7.494517e-40 &
+6.069260e+01 & 8.177557e+01 \\
+22 & hum & -6.878424e+01 & 5.439703e+00 & 1.730957e-36 & -7.944660e+01 &
+-5.812187e+01 \\
+23 & C(season){[}T.3{]} & 2.734460e+01 & 3.648229e+00 & 6.932776e-14 &
+2.019370e+01 & 3.449549e+01 \\
+24 & C(hr){[}T.4{]} & -4.061204e+01 & 5.442219e+00 & 8.897576e-14 &
+-5.127934e+01 & -2.994474e+01 \\
+25 & C(hr){[}T.3{]} & -3.736604e+01 & 5.438879e+00 & 6.630284e-12 &
+-4.802679e+01 & -2.670529e+01 \\
+26 & C(hr){[}T.6{]} & 3.504071e+01 & 5.392208e+00 & 8.339101e-11 &
+2.447144e+01 & 4.560998e+01 \\
+27 & C(hr){[}T.23{]} & 3.226763e+01 & 5.374962e+00 & 1.971727e-09 &
+2.173216e+01 & 4.280309e+01 \\
+28 & C(weathersit){[}T.2{]} & -1.085061e+01 & 1.927762e+00 &
+1.844831e-08 & -1.462922e+01 & -7.072004e+00 \\
+29 & C(weekday){[}T.6{]} & 1.617572e+01 & 2.895707e+00 & 2.357089e-08 &
+1.049984e+01 & 2.185160e+01 \\
+30 & windspeed & -3.395195e+01 & 6.849485e+00 & 7.231704e-07 &
+-4.737763e+01 & -2.052627e+01 \\
+31 & C(hr){[}T.2{]} & -2.669381e+01 & 5.399829e+00 & 7.746697e-07 &
+-3.727802e+01 & -1.610960e+01 \\
+32 & C(hr){[}T.5{]} & -2.382073e+01 & 5.405069e+00 & 1.053882e-05 &
+-3.441521e+01 & -1.322625e+01 \\
+33 & C(hr){[}T.1{]} & -1.753016e+01 & 5.382121e+00 & 1.127691e-03 &
+-2.807966e+01 & -6.980661e+00 \\
+34 & C(weathersit){[}T.4{]} & -7.050842e+01 & 5.925504e+01 &
+2.340964e-01 & -1.866543e+02 & 4.563743e+01 \\
+35 & workingday & 2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-1.686565e+14 & 2.181085e+14 \\
+36 & C(weekday){[}T.1{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+37 & C(weekday){[}T.2{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+38 & C(weekday){[}T.3{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+39 & C(weekday){[}T.4{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+40 & C(weekday){[}T.5{]} & -2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-2.181085e+14 & 1.686565e+14 \\
+41 & holiday & 2.472602e+13 & 9.865948e+13 & 8.021110e-01 &
+-1.686565e+14 & 2.181085e+14 \\
 
 \end{longtable}
 
@@ -624,18 +625,18 @@ model are as follows:
   \item
     \textbf{Temperature (temp)}: From Table~\ref{tbl-ols-coef}, a
     one-unit increase in normalized temperature (temp) is associated
-    with an increase of approximately 233.3 additional bike rentals per
+    with an increase of approximately 245 additional bike rentals per
     hour on average. The data strongly rejects the null hypothesis of no
     effect (p \textless{} 0.001) and the 95\% confidence interval (CI):
-    {[}215, 252{]}. This suggests that warmer temperatures may
+    {[}231, 259{]}. This suggests that warmer temperatures may
     potentially encourage more bike rentals.
   \item
     \textbf{Humidity (hum)}: From Table~\ref{tbl-ols-coef}, a one-unit
     increase in normalized humidity (hum) is associated with a decrease
-    of approximately 81.3 fewer bike rentals per hour on average. The
-    data strongly rejects the null hypothesis of no effect (p
-    \textless{} 0.001) and the 95\% CI: {[}-70, -92{]}. This indicates
-    that higher humidity levels may deter people from renting bikes.
+    of approximately 69 fewer bike rentals per hour on average. The data
+    strongly rejects the null hypothesis of no effect (p \textless{}
+    0.001) and the 95\% CI: {[}-58, -79{]}. This indicates that higher
+    humidity levels may deter people from renting bikes.
   \item
     \textbf{Windspeed (windspeed)}: From Table~\ref{tbl-ols-coef}, a
     one-unit increase in normalized windspeed (windspeed) is associated
@@ -657,9 +658,9 @@ model are as follows:
     rentals. However, note that the categorical coefficients of T.3 and
     T.2 are relative to the reference weather situation (T.1 or
     clear/few clouds/partly cloudly). T.2 or misty/cloudy weather is
-    associated with approximately 10.7 fewer bike rentals per hour on
+    associated with approximately 11 fewer bike rentals per hour on
     average compared to clear weather (T.1). Similarly, T.3 or light
-    rain/snowy weather is associated with approximately 65.9 fewer bike
+    rain/snowy weather is associated with approximately 66 fewer bike
     rentals per hour on average compared to clear weather with a 95\%
     CI:{[}-60, -73{]}. Both effects are supported by strong statistical
     evidence in the data (p \textless{} 0.001). This potentially
@@ -705,13 +706,13 @@ model are as follows:
     dominates the significance levels (p-values) among the top 5.
     However, we need to be careful in interpreting these coefficients as
     they are relative to the reference hour (midnight-1am). For example,
-    T.8 has a coefficient of approximately +310.9 with a 95\% CI:
-    {[}300, 321{]}, indicating that bike rentals (cnt) increase
-    significantly during this hour compared to midnight, likely due to
-    morning commute patterns. In Figure~\ref{fig-hr-effects}, we can see
-    the peaks during typical commuting hours (8am and 5pm), suggesting
-    that people are more likely to rent bikes during these times for
-    commuting purposes.
+    T.8 has a coefficient of approximately +311 with a 95\% CI: {[}300,
+    321{]}, indicating that bike rentals (cnt) increase significantly
+    during this hour compared to midnight, likely due to morning commute
+    patterns. In Figure~\ref{fig-hr-effects}, we can see the peaks
+    during typical commuting hours (8am and 5pm), suggesting that people
+    are more likely to rent bikes during these times for commuting
+    purposes.
   \end{itemize}
 \end{enumerate}
 
@@ -719,7 +720,7 @@ model are as follows:
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-hr-effects-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-hr-effects-output-1.png}}
 
 }
 
@@ -782,7 +783,7 @@ diagnostics}\label{baseline-ols-model-diagnostics}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-residual-diagnostics-baseline-ols-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-residual-diagnostics-baseline-ols-output-1.png}}
 
 }
 
@@ -795,7 +796,7 @@ diagnostics for the baseline OLS model.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-qq-plot-baseline-ols-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-qq-plot-baseline-ols-output-1.png}}
 
 }
 
@@ -808,7 +809,7 @@ residuals from the baseline OLS model.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-scale-location-baseline-ols-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-scale-location-baseline-ols-output-1.png}}
 
 }
 
@@ -830,9 +831,9 @@ heteroskedasticity in the baseline OLS model.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-& LM Statistic & 5506.738716 \\
+& LM Statistic & 5504.267929 \\
 & LM p-value & 0.000000 \\
-& F Statistic & 201.048127 \\
+& F Statistic & 200.916107 \\
 & F p-value & 0.000000 \\
 
 \end{longtable}
@@ -841,7 +842,7 @@ heteroskedasticity in the baseline OLS model.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-residuals-vs-leverage-baseline-ols-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-residuals-vs-leverage-baseline-ols-output-1.png}}
 
 }
 
@@ -854,7 +855,7 @@ residuals versus leverage for the baseline OLS model.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-cooks-distance-baseline-ols-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-cooks-distance-baseline-ols-output-1.png}}
 
 }
 
@@ -947,8 +948,8 @@ comparison metrics for the baseline and log-transformed OLS models.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0 & Baseline OLS & 0.681125 & 210260.673132 & 210578.956864 \\
-1 & Log-Transformed OLS & 0.825781 & 31127.588120 & 31445.871853 \\
+0 & Baseline OLS & 0.681128 & 210260.540315 & 210578.824047 \\
+1 & Log-Transformed OLS & 0.825787 & 31126.973333 & 31445.257065 \\
 
 \end{longtable}
 
@@ -1017,14 +1018,14 @@ for predictors in the log-transformed OLS model.}
 28 & C(weekday){[}T.2{]} & inf \\
 41 & holiday & inf \\
 40 & workingday & inf \\
-34 & C(season){[}T.3{]} & 4.228085 \\
-37 & temp & 3.105460 \\
+34 & C(season){[}T.3{]} & 4.228092 \\
+37 & temp & 3.105462 \\
 33 & C(season){[}T.2{]} & 2.498218 \\
-18 & C(hr){[}T.15{]} & 2.038071 \\
-19 & C(hr){[}T.16{]} & 2.033327 \\
-17 & C(hr){[}T.14{]} & 2.031774 \\
-20 & C(hr){[}T.17{]} & 2.014810 \\
-16 & C(hr){[}T.13{]} & 2.014269 \\
+18 & C(hr){[}T.15{]} & 2.038046 \\
+19 & C(hr){[}T.16{]} & 2.033339 \\
+17 & C(hr){[}T.14{]} & 2.031766 \\
+20 & C(hr){[}T.17{]} & 2.014792 \\
+16 & C(hr){[}T.13{]} & 2.014246 \\
 
 \end{longtable}
 
@@ -1032,7 +1033,7 @@ for predictors in the log-transformed OLS model.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-vif-log-ols-top10-finite-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-vif-log-ols-top10-finite-output-1.png}}
 
 }
 
@@ -1122,7 +1123,7 @@ for baseline log cnt OLS model.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-& RMSE & 0.592645 & 0.00605 \\
+& RMSE & 0.592579 & 0.006101 \\
 
 \end{longtable}
 
@@ -1163,7 +1164,7 @@ RMSE: 0.5926, SD: 0.0062
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-stepwise-cv-rmse-step-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-stepwise-cv-rmse-step-output-1.png}}
 
 }
 
@@ -1208,7 +1209,7 @@ MSE: 0.3512, SD: 0.0073
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-stepwise-cv-mse-step-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-stepwise-cv-mse-step-output-1.png}}
 
 }
 
@@ -1252,7 +1253,7 @@ BIC score: 31444.8327
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-stepwise-bic-step-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-stepwise-bic-step-output-1.png}}
 
 }
 
@@ -1321,7 +1322,7 @@ Adjusted R\^{}2, AIC, and BIC.}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-& Baseline log OLS & 0.825781 & 31127.588120 & 31445.871853 \\
+& Baseline log OLS & 0.825787 & 31126.973333 & 31445.257065 \\
 & Selected model & 0.822891 & 31404.516917 & 31652.933488 \\
 
 \end{longtable}
@@ -1415,7 +1416,7 @@ performance.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-ridge-coefficient-path-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-ridge-coefficient-path-output-1.png}}
 
 }
 
@@ -1453,7 +1454,7 @@ performance.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-lasso-coefficient-path-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-lasso-coefficient-path-output-1.png}}
 
 }
 
@@ -1468,7 +1469,7 @@ dashed lines indicating alpha\_min (minimum CV error) and alpha\_1se
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_joe_files/figure-pdf/fig-lasso-cv-curve-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_bike_sharing_files/figure-pdf/fig-lasso-cv-curve-output-1.png}}
 
 }
 
@@ -1673,7 +1674,8 @@ feature selection produced a substantially sparser model with little
 loss in RMSE, while improving interpretability.
 
 In conclusion, the results show that bike-sharing demand is strongly
-associated to temporal structure and weather-related factors.
+associated to a specific set of temporal structure and weather-related
+factors when carefully selected.
 
 
 
