@@ -60,15 +60,27 @@ ggplot(train_df, aes(x = lcavol, y = lpsa)) +
     color = "Legend"
   )
 
+# Predict on TRAIN
+pred_train_slr <- predict(slr_fit, newdata = train_df)
 
-# Generate predictions using the SLR model
+rmse_train_slr <- RMSE(pred_train_slr, train_df$lpsa)
+r2_train_slr   <- R2(pred_train_slr, train_df$lpsa)
+
+# Predict on TEST
 pred_test_slr <- predict(slr_fit, newdata = test_df)
 
-# Evaluate SLR model performance on test set
-rmse_slr <- RMSE(pred_test_slr, test_df$lpsa)
-r2_slr   <- R2(pred_test_slr, test_df$lpsa)
-rmse_slr #average prediction error in outcome units (lpsa)
-r2_slr 
+rmse_test_slr <- RMSE(pred_test_slr, test_df$lpsa)
+r2_test_slr   <- R2(pred_test_slr, test_df$lpsa)
+
+# When RMSE and R2 for both train and test are close, it indicates good generalization
+# performance without overfitting. Big gaps suggest overfitting or underfitting.
+# RMSE allows us to assess the average prediction error in the same units as the response variable (lpsa).
+# R-squared indicates the proportion of variance in the response explained by the model. 
+rmse_train_slr
+r2_train_slr
+
+rmse_test_slr
+r2_test_slr
 
 # Plot predicted vs actual for SLR model on test set
 ref_line <- tibble(
